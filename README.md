@@ -34,7 +34,7 @@ Gen2 Warehouse MERGE (dedup + upsert into RAW)
 Dynamic Tables (3-tier incremental pipeline)
         |
         v
-Interactive Tables (sub-100ms point lookups)
+Interactive Tables (low-latency point lookups)
         |
         v
 Cortex Agent + Semantic View (natural language queries)
@@ -95,7 +95,7 @@ cortex --version
 ```bash
 snow connection add
 # Enter: account identifier, username, password (provided at lab start)
-# Set role: AUTOMATED_INTELLIGENCE_ADMIN
+# Set role: ACCOUNTADMIN
 # Set warehouse: HOL_WH
 # Set database: DASH_AUTOMATED_INTELLIGENCE_DB
 ```
@@ -159,13 +159,9 @@ The following are already enabled on your lab account:
 
 ### Section 0: CoCo Setup (5 min) — MANUAL
 
-Install and connect Cortex Code:
+Launch Cortex Code and verify your connection:
 
 ```bash
-# Install Cortex Code
-pip install cortex-code
-
-# Launch and connect to your Snowflake account
 cortex
 ```
 
@@ -190,9 +186,10 @@ This creates:
 - 5 Dynamic Tables (3-tier pipeline)
 - 2 Interactive Tables + Interactive Warehouse
 - Data quality monitoring (DMFs + alert)
-- Product catalog + Cortex Search Service
+- Product catalog + 3 Cortex Search Services (product, reviews, tickets)
 - Semantic View for natural language queries
-- 500K generated customer records
+- Seed data loaded from S3 (500K customers, 1M orders, 3.2M order items, 1200 reviews, 1200 tickets)
+- Row Access Policy + WEST_COAST_MANAGER role (RBAC demo)
 
 ---
 
@@ -297,7 +294,7 @@ SELECT * FROM dash_automated_intelligence_db.interactive.order_lookup
 WHERE order_id = '<any-order-uuid-from-raw.orders>';
 ```
 
-Check the query profile for sub-100ms execution time.
+Check the query profile for fast execution time.
 
 ---
 
@@ -347,16 +344,19 @@ See: `ai-sql-demo/ai_filter_demo.sql`
 ### Section 10: Snowflake Intelligence (10 min) — COCO
 
 > **Prompt CoCo:**  
-> *"Create the Cortex Agent from snowflake-intelligence/create_agent.sql"*
+> *"Run snowflake-intelligence/create_agent.sql to create the Business Insights Agent"*
 
-Then interact with it:
-> *"Ask the business insights agent: What are the top 5 customers by total revenue?"*
+Then test the agent with its sample questions:
 
-> *"Ask the agent: What's the revenue breakdown by customer segment this month?"*
+> *"Ask the agent: What was our total revenue in December 2025 vs February 2026?"*
 
-> *"Ask the agent: Which product category has the highest average order value?"*
+> *"Ask the agent: Why are customers returning ski boots?"*
 
-This is the **capstone moment** — natural language queries over the entire pipeline you just built.
+> *"Ask the agent: Revenue dropped in February — what caused it and what do reviews say?"*
+
+> *"Ask the agent: Find reviews mentioning wrong size with a rating below 3"*
+
+This is the **capstone moment** — the agent routes across structured data (text-to-SQL) and unstructured data (Cortex Search) to answer "what happened" and "why."
 
 Also explore: `snowflake-intelligence/semantic_view_sql_demo.sql`
 
@@ -364,16 +364,19 @@ Also explore: `snowflake-intelligence/semantic_view_sql_demo.sql`
 
 ### Section 11: Security & Governance (5 min) — COCO
 
+The Row Access Policy and WEST_COAST_MANAGER role were already created by `setup.sql`. Now demonstrate the contrast:
+
 > **Prompt CoCo:**  
-> *"Run the West Coast Manager setup from security-and-governance/setup_west_coast_manager.sql, then show me how the customer count changes between the AUTOMATED_INTELLIGENCE_ADMIN role and the WEST_COAST_MANAGER role"*
+> *"Query the customer count by state as ACCOUNTADMIN, then as WEST_COAST_MANAGER — show me the difference"*
 
 CoCo will:
-1. Execute the RBAC setup (creates role + row access policy)
-2. Query customers as `AUTOMATED_INTELLIGENCE_ADMIN` (all states)
-3. Query customers as `WEST_COAST_MANAGER` (only CA, OR, WA)
-4. Show the contrast
+1. Query customers as `ACCOUNTADMIN` (all 10 states)
+2. Query customers as `WEST_COAST_MANAGER` (only CA, OR, WA)
+3. Show the contrast
 
 Key insight: The West Coast Manager doesn't even know other states exist — filtered at the database level.
+
+Also explore: `security-and-governance/setup_west_coast_manager.sql` (reference queries)
 
 ---
 
@@ -436,8 +439,7 @@ dbt-analytics/                 <- dbt project (staging + mart models)
 gen2-warehouse/                <- Gen2 + Optima Indexing demo
 iceberg/                       <- Iceberg partitioned writes demo
 interactive/                   <- Interactive Tables validation + load testing
-ml-models/                     <- HuggingFace model import demo
-security-and-governance/       <- Row Access Policy (RBAC) setup
+security-and-governance/       <- Row Access Policy (RBAC) demo queries
 snowflake-intelligence/        <- Cortex Agent + Semantic View
 snowpipe-streaming-python/     <- Python Snowpipe Streaming SDK
 sql-features/                  <- SQL feature demos (pipe operator, UNION BY NAME, etc.)
