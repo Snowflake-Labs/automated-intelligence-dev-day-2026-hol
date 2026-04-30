@@ -953,32 +953,44 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE product_search_service
     FROM product_catalog
   );
 
--- Enable change tracking on reviews and tickets for Agent Search
+-- Enable change tracking on reviews and tickets for Agentic Search
 ALTER TABLE product_reviews SET CHANGE_TRACKING = TRUE;
 ALTER TABLE support_tickets SET CHANGE_TRACKING = TRUE;
 
--- Multi-index Cortex Search for product reviews (Agent Search)
-CREATE OR REPLACE CORTEX SEARCH SERVICE product_reviews_search
-  TEXT INDEXES review_title
-  VECTOR INDEXES review_text (model = 'snowflake-arctic-embed-l-v2.0')
-  ATTRIBUTES product_id, customer_id, rating, review_date
-  WAREHOUSE = hol_wh
-  TARGET_LAG = '1 hour'
-AS (
-  SELECT review_id, product_id, customer_id, review_date, rating, review_title, review_text
-  FROM product_reviews
-);
+-- Create a unified view for Agentic Search (combines reviews + tickets)
+CREATE OR REPLACE VIEW customer_feedback AS
+SELECT
+    CAST(review_id AS VARCHAR) AS doc_id,
+    review_title AS title,
+    review_text AS content,
+    'review' AS source_type,
+    CAST(NULL AS VARCHAR(50)) AS category,
+    rating,
+    review_date AS date_field,
+    customer_id
+FROM product_reviews
+UNION ALL
+SELECT
+    CAST(ticket_id AS VARCHAR) AS doc_id,
+    subject AS title,
+    description AS content,
+    'ticket' AS source_type,
+    category,
+    CAST(NULL AS INT) AS rating,
+    ticket_date::DATE AS date_field,
+    customer_id
+FROM support_tickets;
 
--- Multi-index Cortex Search for support tickets (Agent Search)
-CREATE OR REPLACE CORTEX SEARCH SERVICE support_tickets_search
-  TEXT INDEXES subject
-  VECTOR INDEXES description (model = 'snowflake-arctic-embed-l-v2.0')
-  ATTRIBUTES customer_id, ticket_date, category, priority, status
+-- Multi-index Cortex Search for Agentic Search (reviews + tickets combined)
+CREATE OR REPLACE CORTEX SEARCH SERVICE customer_feedback_search
+  TEXT INDEXES title, doc_id
+  VECTOR INDEXES content (model = 'snowflake-arctic-embed-l-v2.0')
+  ATTRIBUTES source_type, category, rating, date_field, customer_id
   WAREHOUSE = hol_wh
   TARGET_LAG = '1 hour'
 AS (
-  SELECT ticket_id, customer_id, ticket_date, category, priority, subject, description, resolution, status
-  FROM support_tickets
+  SELECT doc_id, title, content, source_type, category, rating, date_field, customer_id
+  FROM customer_feedback
 );
 
 -- Verify Cortex Search Services
@@ -1195,8 +1207,7 @@ ALTER DYNAMIC TABLE dash_automated_intelligence_db.dynamic_tables.product_perfor
 -- ============================================================================
 
 ALTER CORTEX SEARCH SERVICE dash_automated_intelligence_db.raw.product_search_service REFRESH;
-ALTER CORTEX SEARCH SERVICE dash_automated_intelligence_db.raw.product_reviews_search REFRESH;
-ALTER CORTEX SEARCH SERVICE dash_automated_intelligence_db.raw.support_tickets_search REFRESH;
+ALTER CORTEX SEARCH SERVICE dash_automated_intelligence_db.raw.customer_feedback_search REFRESH;
 
 -- ============================================================================
 -- Verify Row Counts

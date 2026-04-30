@@ -7,7 +7,7 @@
 
 ## Overview
 
-In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Cortex Code as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups. You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features (deletion vectors, row lineage), and classify unstructured data with Cortex AI functions. Tie it all together with Snowflake Intelligence — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst (text-to-SQL via a semantic view with verified queries) and Agent Search (multi-index Cortex Search across reviews, tickets, and products) to answer "what happened" and "why" from both structured and unstructured data. Finish with row-level security that transparently governs who sees what — even when querying through an AI agent.
+In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Cortex Code as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups. You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features (deletion vectors, row lineage), and classify unstructured data with Cortex AI functions. Tie it all together with Snowflake Intelligence — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst (text-to-SQL via a semantic view with verified queries) and Agentic Search (multi-index Cortex Search across reviews and tickets with persist-to-table analysis) to answer "what happened" and "why" from both structured and unstructured data. Finish with row-level security that transparently governs who sees what — even when querying through an AI agent.
 
 ### What You'll Learn
 
@@ -18,7 +18,7 @@ In this hands-on lab, you'll build a complete AI-powered retail analytics platfo
 - Monitor data quality automatically with Data Metric Functions
 - Create and query managed Iceberg V3 tables (deletion vectors, row lineage)
 - Classify and filter data with Cortex AI functions (AI_CLASSIFY, AI_FILTER)
-- Build a Cortex Agent with Cortex Analyst (semantic view + verified queries) and Agent Search (multi-index Cortex Search)
+- Build a Cortex Agent with Cortex Analyst (semantic view + verified queries) and Agentic Search (multi-index Cortex Search)
 - Implement transparent row-level security with Row Access Policies
 
 ```
@@ -351,9 +351,9 @@ Then test the agent with its sample questions — each demonstrates different to
 | # | Question | Tools Used |
 |---|----------|-----------|
 | 1 | "Show me monthly revenue trend from June 2025 to April 2026" | Cortex Analyst (text-to-SQL) → chart |
-| 2 | "Revenue dropped in February — what caused it and what do reviews say?" | Cortex Analyst + Agent Search (what→why) |
-| 3 | "Find reviews mentioning wrong size with a rating below 3" | Cortex Search (single index: reviews) |
-| 4 | "Why are customers returning ski boots?" | Agent Search (multi-index: tickets + reviews) |
+| 2 | "Revenue dropped in February — what caused it and what do reviews say?" | Cortex Analyst + Agentic Search (what→why) |
+| 3 | "Find reviews mentioning wrong size with a rating below 3" | Agentic Search (filtered: source_type=review, rating<3) |
+| 4 | "Why are customers returning ski boots?" | Agentic Search (reviews + tickets, persist→analyze) |
 | 5 | "What is our total revenue and customer count by state?" | Cortex Analyst (text-to-SQL) |
 
 This is the **capstone moment** — the agent routes across structured data (text-to-SQL) and unstructured data (Cortex Search) to answer "what happened" and "why."
