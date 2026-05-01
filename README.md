@@ -186,8 +186,8 @@ This creates:
 - 5 Dynamic Tables (3-tier pipeline)
 - 2 Interactive Tables + Interactive Warehouse
 - Data quality monitoring (DMFs + alert)
-- Product catalog + 3 Cortex Search Services (product, reviews, tickets)
-- Semantic View for natural language queries
+- Product catalog + 2 Cortex Search Services (product catalog + customer feedback via Agentic Search)
+- Semantic View with verified queries for natural language queries
 - Seed data loaded from S3 (500K customers, 1M orders, 3.2M order items, 1200 reviews, 1200 tickets)
 - Row Access Policy + WEST_COAST_MANAGER role (RBAC demo)
 
@@ -442,8 +442,6 @@ dbt-analytics/                 <- dbt project (staging + mart models)
 snowflake-intelligence/        <- Cortex Agent + Semantic View
 snowpipe-streaming-python/     <- Python Snowpipe Streaming SDK
 streamlit-dashboard/           <- 7-page Streamlit in Snowflake app
-seed_data_generator/           <- Data generation scripts (output on S3)
-tests/                         <- Validation notebooks
 ```
 
 ---

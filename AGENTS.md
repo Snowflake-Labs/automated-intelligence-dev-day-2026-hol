@@ -13,8 +13,6 @@ dbt-analytics/                 ← dbt project (staging + mart models)
 snowflake-intelligence/        ← Cortex Agent + Semantic View
 snowpipe-streaming-python/     ← Python Snowpipe Streaming SDK
 streamlit-dashboard/           ← 7-page Streamlit in Snowflake app
-seed_data_generator/           ← Data generation scripts (output on S3)
-tests/                         ← Validation notebooks
 ```
 
 ## Critical Rules
