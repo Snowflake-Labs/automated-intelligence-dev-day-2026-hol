@@ -69,11 +69,11 @@ CREATE SCHEMA IF NOT EXISTS dash_automated_intelligence_db.dbt_analytics COMMENT
 
 -- Create warehouse
 CREATE OR REPLACE WAREHOUSE hol_wh
-  WITH WAREHOUSE_SIZE = 'SMALL'
+  WITH WAREHOUSE_SIZE = 'MEDIUM'
   AUTO_SUSPEND = 60
   AUTO_RESUME = TRUE
   INITIALLY_SUSPENDED = TRUE
-  COMMENT = 'Warehouse for automated intelligence dynamic tables demo';
+  COMMENT = 'Warehouse for automated intelligence HOL (Medium for 50M row scale)';
 
 -- Set context
 USE DATABASE dash_automated_intelligence_db;
@@ -1165,7 +1165,7 @@ CREATE STAGE IF NOT EXISTS dash_automated_intelligence_db.raw.the_dashboard_stag
     COMMENT = 'Stage for Streamlit dashboard application files';
 
 -- ============================================================================
--- Load Seed Data from S3
+-- Load Seed Data from S3 (Parquet for large tables, CSV for small tables)
 -- ============================================================================
 
 CREATE OR REPLACE FILE FORMAT dash_automated_intelligence_db.raw.csv_format
@@ -1174,20 +1174,26 @@ CREATE OR REPLACE FILE FORMAT dash_automated_intelligence_db.raw.csv_format
     FIELD_OPTIONALLY_ENCLOSED_BY = '"'
     NULL_IF = ('');
 
+CREATE OR REPLACE FILE FORMAT dash_automated_intelligence_db.raw.parquet_format
+    TYPE = 'PARQUET';
+
 COPY INTO dash_automated_intelligence_db.raw.customers
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/customers.csv'
-FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.csv_format')
-ON_ERROR = 'CONTINUE';
+FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/parquet/'
+FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.parquet_format')
+PATTERN = 'customers.*\.parquet'
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
 
 COPY INTO dash_automated_intelligence_db.raw.orders
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/orders.csv'
-FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.csv_format')
-ON_ERROR = 'CONTINUE';
+FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/parquet/'
+FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.parquet_format')
+PATTERN = 'orders_.*\.parquet'
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
 
 COPY INTO dash_automated_intelligence_db.raw.order_items
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/order_items.csv'
-FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.csv_format')
-ON_ERROR = 'CONTINUE';
+FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/parquet/'
+FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.parquet_format')
+PATTERN = 'order_items_.*\.parquet'
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
 
 COPY INTO dash_automated_intelligence_db.raw.product_reviews
 FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/product_reviews.csv'
