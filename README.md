@@ -5,8 +5,7 @@
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Lab Sections](#lab-sections)
-  - [Section 0: CoCo Setup](#section-0-coco-setup-5-min--manual)
-  - [Section 1: Infrastructure Setup](#section-1-infrastructure-setup-10-min--manual)
+  - [Section 1: Setup](#section-1-setup-10-min--manual)
   - [Section 2: Streaming Ingestion](#section-2-streaming-ingestion-10-min--manual)
   - [Section 3: Gen2 Warehouse & MERGE](#section-3-gen2-warehouse--merge-5-min--coco)
   - [Section 4: Dynamic Tables Pipeline](#section-4-dynamic-tables-pipeline-5-min--coco)
@@ -16,7 +15,7 @@
   - [Section 8: dbt Analytics](#section-8-dbt-analytics-10-min--coco)
   - [Section 9: Cortex AI Functions](#section-9-cortex-ai-functions-5-min--coco)
   - [Section 10: Snowflake Intelligence](#section-10-snowflake-intelligence-10-min--coco)
-  - [Section 11: Security & Governance](#section-11-security--governance-5-min--coco)
+  - [Section 11: Security & Governance](#section-11-security--governance-5-min--snowflake-intelligence)
   - [Section 12: Streamlit Dashboard](#section-12-streamlit-dashboard-5-min--coco)
 - [Summary](#summary)
 - [Cleanup](#cleanup)
@@ -176,7 +175,7 @@ The following are already enabled on your lab account:
 
 ---
 
-### Section 0: CoCo Setup (5 min) — MANUAL
+### Section 1: Setup (10 min) — MANUAL
 
 Launch Cortex Code and verify your connection:
 
@@ -188,11 +187,7 @@ Verify connection:
 - CoCo should show your active connection, role, and warehouse
 - Test with: *"What databases do I have access to?"*
 
----
-
-### Section 1: Infrastructure Setup (10 min) — MANUAL
-
-Run the core infrastructure script in Snowsight or terminal:
+Then run the core infrastructure script:
 
 ```bash
 snow sql -f setup.sql -c <your-connection>
@@ -383,19 +378,17 @@ Also explore: `snowflake-intelligence/semantic_view_sql_demo.sql`
 
 ---
 
-### Section 11: Security & Governance (5 min) — CoCo
+### Section 11: Security & Governance (5 min) — Snowflake Intelligence
 
-The Row Access Policy and WEST_COAST_MANAGER role were already created by `setup.sql`. Now demonstrate the contrast:
+The Row Access Policy and WEST_COAST_MANAGER role were already created by `setup.sql`. Now demonstrate the contrast using Snowflake Intelligence:
 
-> **Prompt CoCo:**  
-> *"Query the customer count by state as ACCOUNTADMIN, then as WEST_COAST_MANAGER — show me the difference"*
+1. Open **Snowflake Intelligence** in Snowsight
+2. Ask the Business Insights Agent: *"What is our total revenue and customer count by state?"*
+3. Note the result (all 10 states visible as ACCOUNTADMIN)
+4. Switch role to `WEST_COAST_MANAGER` and ask the same question
+5. Only CA, OR, WA appear — the Row Access Policy transparently filters data
 
-CoCo will:
-1. Query customers as `ACCOUNTADMIN` (all 10 states)
-2. Query customers as `WEST_COAST_MANAGER` (only CA, OR, WA)
-3. Show the contrast
-
-Key insight: The West Coast Manager doesn't even know other states exist — filtered at the database level.
+Key insight: The same agent, same question — but different results based on who's asking. Row-level security works transparently through AI agents.
 
 Also explore: `demos/security-rbac.sql` (reference queries)
 
@@ -416,8 +409,7 @@ Open in Snowsight to see all the data flowing through the system — live ingest
 
 | Section | Method | Duration | Focus |
 |---------|--------|----------|-------|
-| 0. CoCo Setup | MANUAL | 5 min | Install + connect |
-| 1. Infrastructure | MANUAL | 10 min | Run setup.sql |
+| 1. Setup | MANUAL | 10 min | CoCo install + setup.sql |
 | 2. Streaming | MANUAL | 10 min | Python SDK → STAGING |
 | 3. Gen2 MERGE | CoCo | 5 min | Staging → RAW + Optima |
 | 4. Dynamic Tables | CoCo | 5 min | Pipeline status + data |
@@ -427,12 +419,12 @@ Open in Snowsight to see all the data flowing through the system — live ingest
 | 8. dbt Analytics | CoCo | 10 min | Build models |
 | 9. Cortex AI | CoCo | 5 min | AI_CLASSIFY, AI_FILTER |
 | 10. Intelligence | CoCo | 10 min | Agent creation + NL queries |
-| 11. Security | CoCo | 5 min | RBAC role contrast |
+| 11. Security | SI | 5 min | RBAC via Snowflake Intelligence |
 | 12. Streamlit | CoCo | 5 min | Deploy dashboard |
-| | | **~87 min** | |
 
-**Manual: 4 sections** (setup, streaming, interactive, CoCo install)  
-**CoCo: 9 sections** (Gen2, DTs, Iceberg, DQ, dbt, Cortex AI, Intelligence, Security, Streamlit)
+**Manual: 3 sections** (setup, streaming, interactive)  
+**CoCo: 8 sections** (Gen2, DTs, Iceberg, DQ, dbt, Cortex AI, Intelligence, Streamlit)  
+**Snowflake Intelligence: 1 section** (Security & Governance)
 
 ---
 
