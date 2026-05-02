@@ -303,13 +303,22 @@ This fires 200 concurrent sessions (1000 queries total) against both Interactive
 
 ### Section 7: Data Quality (5 min) — CoCo
 
-> **Prompt CoCo:**  
-> *"Check the data quality monitoring results — are there any NULL violations in the orders or order_items tables?"*
+The setup script intentionally injected ~200 NULL values into `orders.total_amount` and `order_items.quantity` to simulate real data quality issues. The DMFs have already detected these violations, and the alert has fired.
 
-CoCo will query `vw_dq_monitoring_results` and summarize findings.
+> **Prompt CoCo:**  
+> *"Check the data quality monitoring results and show me which columns have NULL violations"*
+
+CoCo will query `vw_dq_monitoring_results` and show that `TOTAL_AMOUNT` (200 NULLs) and `QUANTITY` (200 NULLs) have violations.
 
 Follow up:
 > *"Show me the alert history for data quality issues"*
+
+CoCo will query `data_quality_alerts` and show the fired alert with timestamp and summary.
+
+Then confirm the scope:
+> *"How many orders have NULL total_amount?"*
+
+> **Snowsight:** You can also view data quality results visually — navigate to **Data → Databases → DASH_AUTOMATED_INTELLIGENCE_DB → RAW → ORDERS → Data Quality** tab.
 
 Also explore: `demos/data-quality.sql`
 

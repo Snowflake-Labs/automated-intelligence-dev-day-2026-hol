@@ -1168,6 +1168,30 @@ PATTERN = '.*support_tickets\.csv'
 FORCE = TRUE;
 
 -- ============================================================================
+-- Inject Data Quality Issues (intentional NULLs for DMF demo)
+-- Purpose: ~200 NULL values in monitored columns so DMFs detect violations
+-- ============================================================================
+
+CREATE OR REPLACE TEMPORARY TABLE dash_automated_intelligence_db.raw.dq_bad_orders AS
+SELECT order_id FROM dash_automated_intelligence_db.raw.orders SAMPLE (200 ROWS);
+
+UPDATE dash_automated_intelligence_db.raw.orders o
+SET total_amount = NULL
+FROM dash_automated_intelligence_db.raw.dq_bad_orders b
+WHERE o.order_id = b.order_id;
+
+CREATE OR REPLACE TEMPORARY TABLE dash_automated_intelligence_db.raw.dq_bad_items AS
+SELECT order_item_id FROM dash_automated_intelligence_db.raw.order_items SAMPLE (200 ROWS);
+
+UPDATE dash_automated_intelligence_db.raw.order_items oi
+SET quantity = NULL
+FROM dash_automated_intelligence_db.raw.dq_bad_items b
+WHERE oi.order_item_id = b.order_item_id;
+
+-- Fire the alert immediately so results are available by Section 7
+EXECUTE ALERT dash_automated_intelligence_db.raw.data_quality_alert;
+
+-- ============================================================================
 -- Refresh Dynamic Tables (now that seed data is loaded)
 -- ============================================================================
 
