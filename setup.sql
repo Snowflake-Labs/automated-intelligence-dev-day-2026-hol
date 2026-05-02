@@ -1231,6 +1231,9 @@ CREATE OR REPLACE INTERACTIVE WAREHOUSE hol_interactive_wh
 
 ALTER WAREHOUSE IF EXISTS hol_interactive_wh RESUME IF SUSPENDED;
 
+-- Switch back to standard warehouse for remaining operations
+USE WAREHOUSE hol_wh;
+
 -- ============================================================================
 -- Verify Row Counts
 -- ============================================================================
