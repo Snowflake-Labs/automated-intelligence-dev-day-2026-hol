@@ -46,6 +46,8 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE AUTOMATED_INTELLIGENCE_ADMIN;
 -- STEP 0: WIPE SLATE - Drop all existing objects
 -- ============================================================================
 
+ALTER SESSION SET STATEMENT_TIMEOUT_IN_SECONDS = 1800;
+
 DROP DATABASE IF EXISTS dash_automated_intelligence_db CASCADE;
 CREATE DATABASE dash_automated_intelligence_db;
 USE DATABASE dash_automated_intelligence_db;

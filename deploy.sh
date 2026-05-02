@@ -15,7 +15,7 @@ snow sql -f "$SCRIPT_DIR/cleanup.sql" -c "$CONNECTION"
 echo ""
 echo "[2/5] Running setup.sql (50M data load + all objects)..."
 echo "       This takes ~10-15 min (data load + DT refresh + Interactive Tables)"
-snow sql -f "$SCRIPT_DIR/setup.sql" -c "$CONNECTION" --timeout 1800
+snow sql -f "$SCRIPT_DIR/setup.sql" -c "$CONNECTION"
 
 echo ""
 echo "[3/5] Creating agent..."
