@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 CONNECTION=${1:-dash-builder}
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -14,7 +14,8 @@ snow sql -f "$SCRIPT_DIR/cleanup.sql" -c "$CONNECTION"
 
 echo ""
 echo "[2/5] Running setup.sql (50M data load + all objects)..."
-snow sql -f "$SCRIPT_DIR/setup.sql" -c "$CONNECTION"
+echo "       This takes ~10-15 min (data load + DT refresh + Interactive Tables)"
+snow sql -f "$SCRIPT_DIR/setup.sql" -c "$CONNECTION" --timeout 1800
 
 echo ""
 echo "[3/5] Creating agent..."

@@ -1128,35 +1128,41 @@ CREATE OR REPLACE FILE FORMAT dash_automated_intelligence_db.raw.csv_format
     FIELD_OPTIONALLY_ENCLOSED_BY = '"'
     NULL_IF = ('');
 
+CREATE OR REPLACE STAGE dash_automated_intelligence_db.raw.hol_data_stage
+    URL = 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/'
+    FILE_FORMAT = dash_automated_intelligence_db.raw.parquet_format;
+
 COPY INTO dash_automated_intelligence_db.raw.customers
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/parquet/'
+FROM @dash_automated_intelligence_db.raw.hol_data_stage/parquet/
 FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.parquet_format')
 PATTERN = 'customers.*\.parquet'
 MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
 FORCE = TRUE;
 
 COPY INTO dash_automated_intelligence_db.raw.orders
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/parquet/'
+FROM @dash_automated_intelligence_db.raw.hol_data_stage/parquet/
 FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.parquet_format')
 PATTERN = 'orders_.*\.parquet'
 MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
 FORCE = TRUE;
 
 COPY INTO dash_automated_intelligence_db.raw.order_items
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/parquet/'
+FROM @dash_automated_intelligence_db.raw.hol_data_stage/parquet/
 FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.parquet_format')
 PATTERN = 'order_items_.*\.parquet'
 MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
 FORCE = TRUE;
 
 COPY INTO dash_automated_intelligence_db.raw.product_reviews
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/product_reviews.csv'
+FROM @dash_automated_intelligence_db.raw.hol_data_stage/
 FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.csv_format')
+PATTERN = 'product_reviews\.csv'
 FORCE = TRUE;
 
 COPY INTO dash_automated_intelligence_db.raw.support_tickets
-FROM 's3://sfquickstarts/summit_dev_day_2026_automated_intelligence_hol/support_tickets.csv'
+FROM @dash_automated_intelligence_db.raw.hol_data_stage/
 FILE_FORMAT = (FORMAT_NAME = 'dash_automated_intelligence_db.raw.csv_format')
+PATTERN = 'support_tickets\.csv'
 FORCE = TRUE;
 
 -- ============================================================================
