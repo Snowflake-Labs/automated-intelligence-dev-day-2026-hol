@@ -13,11 +13,12 @@
   - [Section 6: Interactive Tables](#section-6-interactive-tables-5-min--coco--manual)
   - [Section 7: Data Quality](#section-7-data-quality-5-min--coco)
   - [Section 8: dbt Analytics](#section-8-dbt-analytics-10-min--coco)
-  - [Section 9: Cortex AI Functions](#section-9-cortex-ai-functions-5-min--coco)
+  - [Section 9: CoCo Custom Skill](#section-9-coco-custom-skill-5-min--coco)
   - [Section 10: Snowflake Intelligence](#section-10-snowflake-intelligence-10-min--coco)
   - [Section 11: Security & Governance](#section-11-security--governance-5-min--snowflake-intelligence)
   - [Section 12: Streamlit Dashboard](#section-12-streamlit-dashboard-5-min--coco)
-  - [Section 13: Agent Evaluation](#section-13-agent-evaluation-5-min--coco)
+  - [Section 13: Agent Evaluation](#section-13-agent-evaluation-5-min--coco--snowsight)
+  - [Section 14: MCP Server](#section-14-mcp-server-5-min--coco)
 - [Cleanup](#cleanup)
 - [Resources](#resources)
 
@@ -25,7 +26,7 @@
 
 ## Overview
 
-In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Cortex Code as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups. You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features (deletion vectors, row lineage), and classify unstructured data with Cortex AI functions. Tie it all together with Snowflake Intelligence — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst (text-to-SQL via a semantic view with verified queries) and Agentic Search (multi-index Cortex Search across reviews and tickets with persist-to-table analysis) to answer "what happened" and "why" from both structured and unstructured data. Finish with row-level security that transparently governs who sees what — even when querying through an AI agent.
+In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Cortex Code as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups. You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features (deletion vectors, row lineage), and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake Intelligence — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst (text-to-SQL via a semantic view with verified queries) and Agentic Search (multi-index Cortex Search across reviews and tickets with persist-to-table analysis) to answer "what happened" and "why" from both structured and unstructured data. Evaluate your agent with ground-truth datasets, implement row-level security that transparently governs who sees what, and expose your agent as a managed MCP server for external AI clients.
 
 ### What You'll Learn
 
@@ -36,7 +37,9 @@ In this hands-on lab, you'll build a complete AI-powered retail analytics platfo
 - Monitor data quality automatically with Data Metric Functions
 - Create and query managed Iceberg V3 tables (deletion vectors, row lineage)
 - Classify and filter data with Cortex AI functions (AI_CLASSIFY, AI_FILTER)
+- Create custom CoCo skills for reusable team workflows
 - Build a Cortex Agent with Cortex Analyst (semantic view + verified queries) and Agentic Search (multi-index Cortex Search)
+- Expose agents as managed MCP servers for external AI clients
 - Implement transparent row-level security with Row Access Policies
 
 ```
@@ -339,17 +342,22 @@ Follow up:
 
 ---
 
-### Section 9: Cortex AI Functions (5 min) — CoCo
+### Section 9: CoCo Custom Skill (5 min) — CoCo
+
+Create a reusable CoCo skill that automates table profiling:
 
 > **Prompt CoCo:**  
-> *"Run sentiment analysis on the product reviews using AI_CLASSIFY — show me 5 reviews with their predicted sentiment"*
+> *"Create a custom CoCo skill called 'profile-table' that takes a table name, counts rows, checks for NULL columns, shows distinct value counts, and flags potential data quality issues"*
 
-CoCo will write and execute AI function SQL against `product_reviews`.
+CoCo will:
+1. Create `.cortex/skills/profile-table/SKILL.md` with the skill definition
+2. Define when the skill should activate (triggers)
+3. Include step-by-step instructions for profiling any table
 
-Also try:
-> *"Use AI_FILTER to find product catalog items suitable for beginners"*
+Test it:
+> *"$profile-table DASH_AUTOMATED_INTELLIGENCE_DB.RAW.ORDERS"*
 
-See: `demos/cortex-ai-functions.sql`
+This demonstrates how teams package repeatable workflows as shareable CoCo skills.
 
 ---
 
@@ -438,6 +446,48 @@ If any questions score low on **logical consistency**, inspect the trace to see 
 4. Recreate the agent and re-run the evaluation with a new run name
 
 > **Tip:** Evaluation scores can vary between runs due to LLM non-determinism. Run multiple evaluations and compare averages for reliable signal.
+
+---
+
+### Section 14: MCP Server (5 min) — CoCo
+
+Expose the Business Insights Agent as a managed MCP server so external AI clients can discover and invoke it:
+
+> **Prompt CoCo:**  
+> *"Create a Snowflake-managed MCP server that exposes our Business Insights Agent, semantic view, and customer feedback search as tools"*
+
+CoCo will run:
+
+```sql
+CREATE MCP SERVER business_insights_mcp
+  FROM SPECIFICATION $$
+    tools:
+      - name: "business-insights-agent"
+        type: "CORTEX_AGENT_RUN"
+        identifier: "DASH_AUTOMATED_INTELLIGENCE_DB.SEMANTIC.BUSINESS_INSIGHTS_AGENT"
+        description: "AI agent that answers business questions using structured data and customer feedback"
+        title: "Business Insights Agent"
+
+      - name: "revenue-analytics"
+        type: "CORTEX_ANALYST_MESSAGE"
+        identifier: "DASH_AUTOMATED_INTELLIGENCE_DB.SEMANTIC.BUSINESS_ANALYTICS_SEMANTIC"
+        description: "Text-to-SQL for revenue, orders, customers, and product metrics"
+        title: "Revenue Analytics"
+
+      - name: "customer-feedback-search"
+        type: "CORTEX_SEARCH_SERVICE_QUERY"
+        identifier: "DASH_AUTOMATED_INTELLIGENCE_DB.RAW.CUSTOMER_FEEDBACK_SEARCH"
+        description: "Search across product reviews and support tickets"
+        title: "Customer Feedback Search"
+  $$;
+```
+
+**Connect from CoCo:**
+```bash
+cortex mcp add business-insights https://<account_url>/api/v2/databases/DASH_AUTOMATED_INTELLIGENCE_DB/schemas/SEMANTIC/mcp-servers/BUSINESS_INSIGHTS_MCP --type http
+```
+
+Now any MCP-compatible client (CoCo, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
 
 ---
 
