@@ -218,17 +218,20 @@ SELECT COUNT(*) FROM dash_automated_intelligence_db.staging.order_items_staging;
 ### Section 3: Gen2 Warehouse & MERGE (5 min) — CoCo
 
 > **Prompt CoCo:**  
-> *"Merge the staging data into RAW using the Gen2 warehouse and show me the timing results"*
+> *"Switch to the Gen2 warehouse, check how many rows are in staging, then merge them into RAW and show me the results"*
 
 CoCo will:
-1. Switch to the Gen2 warehouse
-2. Call `staging.merge_staging_to_raw(TRUE)`
-3. Display timing: total duration, orders merged, order_items merged
+1. Switch to `hol_gen2_wh`
+2. Check `staging.orders_staging` and `staging.order_items_staging` row counts
+3. Call `staging.merge_staging_to_raw(TRUE)`
+4. Display timing: total duration, orders merged, order_items merged
+
+> **Note:** If staging is empty (you skipped Section 2), the merge will report 0 rows — that's expected. The Gen2 warehouse is still demonstrating Optima Indexing on the point lookup below.
 
 Then ask:
-> *"Run a point lookup for customer_id 5000 and show me the partition pruning from the query profile"*
+> *"Run a point lookup for customer_id 5000 on the Gen2 warehouse"*
 
-This demonstrates Optima Indexing — automatic partition pruning with zero configuration.
+CoCo will query `RAW.ORDERS WHERE customer_id = 5000` and return ~25 orders. To see the **partition pruning** (Optima Indexing), open the query profile in Snowsight — you'll see only a fraction of partitions were scanned despite no explicit clustering key.
 
 Also explore: `demos/gen2-warehouse.sql`
 
@@ -239,13 +242,17 @@ Also explore: `demos/gen2-warehouse.sql`
 > **Prompt CoCo:**  
 > *"Show me the Dynamic Tables pipeline status — names, target lag, last refresh time, and row counts for each tier"*
 
-CoCo will query `INFORMATION_SCHEMA` and display the 3-tier pipeline:
-- **Tier 1** (1-min lag): `enriched_orders`, `enriched_order_items`
-- **Tier 2** (DOWNSTREAM): `fact_orders`
-- **Tier 3** (DOWNSTREAM): `daily_business_metrics`, `product_performance_metrics`
+CoCo will query the dynamic tables metadata and display the 3-tier pipeline:
+- **Tier 1** (1-min lag): `enriched_orders` (50M rows), `enriched_order_items` (161M rows)
+- **Tier 2** (DOWNSTREAM): `fact_orders` (161M rows)
+- **Tier 3** (DOWNSTREAM): `daily_business_metrics` (365 rows), `product_performance_metrics` (4 rows)
+
+All should show `scheduling_state = ACTIVE`.
 
 Follow up:
 > *"Show me a sample of the daily business metrics — top 5 days by revenue"*
+
+Expected: All top-5 days are in December 2025 (holiday peak), each with ~$755M revenue and ~258K orders.
 
 ---
 
@@ -311,7 +318,11 @@ The setup script intentionally injected ~200 NULL values into `orders.total_amou
 > **Prompt CoCo:**  
 > *"Check the data quality monitoring results and show me which columns have NULL violations"*
 
-CoCo will show that `TOTAL_AMOUNT` and `QUANTITY` have violations — but `product_name` NULLs are going **undetected**.
+CoCo will show that `TOTAL_AMOUNT` (200 NULLs) and `QUANTITY` (200 NULLs) have violations — but `product_name` NULLs are going **undetected**.
+
+> **Bonus:** *"Show me the alert history for data quality issues"*
+
+CoCo will query `data_quality_alerts` and show the alert that fired during setup.
 
 **Discover the gap:**
 > *"Are there any NULL values in order_items.product_name? Is that column being monitored?"*
