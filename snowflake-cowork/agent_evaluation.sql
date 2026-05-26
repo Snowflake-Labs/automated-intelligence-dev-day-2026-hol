@@ -57,7 +57,7 @@ CREATE OR REPLACE STAGE evaluation_config
   FILE_FORMAT = yaml_file_format;
 
 -- Upload the YAML config (agent_evaluation_config.yaml) to stage
--- From Cortex Code / CLI:
+-- From Snowflake CoCo / CLI:
 --   snow stage copy snowflake-cowork/agent_evaluation_config.yaml @DASH_AUTOMATED_INTELLIGENCE_DB.SEMANTIC.EVALUATION_CONFIG/ --overwrite
 -- Or from Snowsight: Ingestion > Add Data > Load files into a Stage
 

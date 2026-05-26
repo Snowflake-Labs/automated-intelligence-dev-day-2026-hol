@@ -26,11 +26,11 @@
 
 ## Overview
 
-In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Cortex Code as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups. You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features (deletion vectors, row lineage), and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake CoWork — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst (text-to-SQL via a semantic view with verified queries) and Agentic Search (multi-index Cortex Search across reviews and tickets with persist-to-table analysis) to answer "what happened" and "why" from both structured and unstructured data. Evaluate your agent with ground-truth datasets, implement row-level security that transparently governs who sees what, and expose your agent as a managed MCP server for external AI clients.
+In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Snowflake CoCo as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups. You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features (deletion vectors, row lineage), and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake CoWork — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst (text-to-SQL via a semantic view with verified queries) and Agentic Search (multi-index Cortex Search across reviews and tickets with persist-to-table analysis) to answer "what happened" and "why" from both structured and unstructured data. Evaluate your agent with ground-truth datasets, implement row-level security that transparently governs who sees what, and expose your agent as a managed MCP server for external AI clients.
 
 ### What You'll Learn
 
-- Accelerate development with Cortex Code (AI-assisted SQL, deployment, and data exploration)
+- Accelerate development with Snowflake CoCo (AI-assisted SQL, deployment, and data exploration)
 - Stream real-time data with Snowpipe Streaming and transform with Dynamic Tables
 - Serve low-latency queries with Interactive Tables and Gen2 Warehouses
 - Build analytical models with dbt
@@ -91,7 +91,7 @@ Ensure these are installed on your laptop:
 | pip | latest | `pip --version` |
 | git | any | `git --version` |
 
-### 3. Install Snowflake CLI + Cortex Code
+### 3. Install Snowflake CLI + Snowflake CoCo
 
 Run the installer script:
 
@@ -107,7 +107,7 @@ bash install.sh
 
 This installs:
 - **Snowflake CLI** (`snow`) — for SQL execution and deployments
-- **Cortex Code CLI** (`cortex`) — AI-powered coding assistant for Snowflake
+- **Snowflake CoCo CLI** (`cortex`) — AI-powered coding assistant for Snowflake
 
 Verify:
 ```bash
@@ -156,13 +156,13 @@ cd automated-intelligence-hol
 
 > **Legend:**  
 > MANUAL = Run in terminal or Snowsight (no CoCo)  
-> CoCo = Run via Cortex Code prompts
+> CoCo = Run via Snowflake CoCo prompts
 
 ---
 
 ### Section 1: Setup (10 min) — MANUAL
 
-Launch Cortex Code and verify your connection:
+Launch Snowflake CoCo and verify your connection:
 
 ```bash
 cortex
@@ -534,4 +534,4 @@ snow sql -f cleanup.sql -c <your-connection>
 - [Semantic Views](https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view)
 - [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 - [Row Access Policies](https://docs.snowflake.com/en/user-guide/security-row-intro)
-- [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
+- [Snowflake CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)

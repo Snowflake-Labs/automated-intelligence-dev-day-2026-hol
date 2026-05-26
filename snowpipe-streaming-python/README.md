@@ -411,6 +411,6 @@ For the full migration guide, see the [Snowflake docs](https://docs.snowflake.co
 
 Apache License 2.0
 
-## Generated with Cortex Code
+## Generated with Snowflake CoCo
 
-This implementation was created using Snowflake Cortex Code to replicate the Java SDK implementation in Python.
+This implementation was created using Snowflake Snowflake CoCo to replicate the Java SDK implementation in Python.

@@ -2,7 +2,7 @@
 #
 # Automated Intelligence HOL — Installer
 #
-# Installs Snowflake CLI (snow) and Cortex Code CLI (cortex)
+# Installs Snowflake CLI (snow) and Snowflake CoCo CLI (cortex)
 # if not already present, then verifies your Snowflake connection.
 #
 # Usage:
@@ -44,16 +44,16 @@ install_snowflake_cli() {
 
 install_cortex_code_cli() {
   if check_cmd cortex; then
-    ok "Cortex Code CLI (cortex) already installed — $(cortex --version 2>/dev/null || echo 'unknown version')"
+    ok "Snowflake CoCo CLI (cortex) already installed — $(cortex --version 2>/dev/null || echo 'unknown version')"
     return 0
   fi
 
-  msg "Installing Cortex Code CLI..."
+  msg "Installing Snowflake CoCo CLI..."
   if curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh; then
-    ok "Cortex Code CLI installed"
+    ok "Snowflake CoCo CLI installed"
     return 0
   fi
-  die "Could not install Cortex Code CLI. See: https://docs.snowflake.com/en/user-guide/cortex-code"
+  die "Could not install Snowflake CoCo CLI. See: https://docs.snowflake.com/en/user-guide/cortex-code"
 }
 
 check_snowflake_auth() {
@@ -92,7 +92,7 @@ echo -e "${G}All done!${N}"
 echo ""
 echo "Next steps:"
 echo "  snow --version       # Verify Snowflake CLI"
-echo "  cortex --version     # Verify Cortex Code CLI"
+echo "  cortex --version     # Verify Snowflake CoCo CLI"
 echo "  snow connection add  # Configure Snowflake connection (if not done)"
-echo "  cortex               # Start Cortex Code"
+echo "  cortex               # Start Snowflake CoCo"
 echo ""

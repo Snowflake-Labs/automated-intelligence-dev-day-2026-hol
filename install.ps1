@@ -1,7 +1,7 @@
 #
 # Automated Intelligence HOL — Installer (Windows)
 #
-# Installs Snowflake CLI (snow) and Cortex Code CLI (cortex)
+# Installs Snowflake CLI (snow) and Snowflake CoCo CLI (cortex)
 # if not already present, then verifies your Snowflake connection.
 #
 # Usage:
@@ -46,20 +46,20 @@ function Install-SnowflakeCLI {
 
 function Install-CortexCodeCLI {
     if (Test-Command "cortex") {
-        Write-Ok "Cortex Code CLI (cortex) already installed"
+        Write-Ok "Snowflake CoCo CLI (cortex) already installed"
         return $true
     }
 
-    Write-Msg "Installing Cortex Code CLI..."
+    Write-Msg "Installing Snowflake CoCo CLI..."
     try {
         $tempScript = Join-Path $env:TEMP "cc_install.ps1"
         Invoke-WebRequest -Uri "https://ai.snowflake.com/static/cc-scripts/install.ps1" -OutFile $tempScript -UseBasicParsing
         & $tempScript
         Remove-Item $tempScript -ErrorAction SilentlyContinue
-        if ($LASTEXITCODE -eq 0) { Write-Ok "Cortex Code CLI installed"; return $true }
+        if ($LASTEXITCODE -eq 0) { Write-Ok "Snowflake CoCo CLI installed"; return $true }
     }
     catch { }
-    Write-Err "Could not install Cortex Code CLI. See: https://docs.snowflake.com/en/user-guide/cortex-code"
+    Write-Err "Could not install Snowflake CoCo CLI. See: https://docs.snowflake.com/en/user-guide/cortex-code"
 }
 
 function Test-SnowflakeAuth {
@@ -103,7 +103,7 @@ Write-Host "All done!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:"
 Write-Host "  snow --version       # Verify Snowflake CLI"
-Write-Host "  cortex --version     # Verify Cortex Code CLI"
+Write-Host "  cortex --version     # Verify Snowflake CoCo CLI"
 Write-Host "  snow connection add  # Configure Snowflake connection (if not done)"
-Write-Host "  cortex               # Start Cortex Code"
+Write-Host "  cortex               # Start Snowflake CoCo"
 Write-Host ""
