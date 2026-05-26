@@ -14,8 +14,8 @@
   - [Section 7: Data Quality](#section-7-data-quality-5-min--coco)
   - [Section 8: dbt Analytics](#section-8-dbt-analytics-10-min--coco)
   - [Section 9: CoCo Custom Skill](#section-9-coco-custom-skill-5-min--coco)
-  - [Section 10: Snowflake CoWork](#section-10-snowflake-intelligence-10-min--coco)
-  - [Section 11: Security & Governance](#section-11-security--governance-5-min--snowflake-intelligence)
+  - [Section 10: Snowflake CoWork](#section-10-snowflake-cowork-10-min--coco)
+  - [Section 11: Security & Governance](#section-11-security--governance-5-min--snowflake-cowork)
   - [Section 12: Streamlit Dashboard](#section-12-streamlit-dashboard-5-min--coco)
   - [Section 13: Agent Evaluation](#section-13-agent-evaluation-5-min--coco--snowsight)
   - [Section 14: MCP Server](#section-14-mcp-server-5-min--coco)
@@ -387,7 +387,7 @@ This demonstrates how teams package repeatable workflows as shareable CoCo skill
 ### Section 10: Snowflake CoWork (10 min) — CoCo
 
 > **Prompt CoCo:**  
-> *"Run snowflake-intelligence/create_agent.sql to create the Business Insights Agent"*
+> *"Run snowflake-cowork/create_agent.sql to create the Business Insights Agent"*
 
 Then test the agent with its sample questions — each demonstrates different tool routing:
 
@@ -403,7 +403,7 @@ Then test the agent with its sample questions — each demonstrates different to
 
 This is the **capstone moment** — the agent routes across structured data (text-to-SQL) and unstructured data (Cortex Search) to answer "what happened" and "why."
 
-Also explore: `snowflake-intelligence/semantic_view_sql_demo.sql`
+Also explore: `snowflake-cowork/semantic_view_sql_demo.sql`
 
 ---
 

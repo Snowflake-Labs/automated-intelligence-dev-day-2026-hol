@@ -8,7 +8,7 @@
 -- - Direct integration with Cortex Analyst
 -- ============================================================================
 
-USE ROLE SNOWFLAKE_INTELLIGENCE_ADMIN;
+USE ROLE AUTOMATED_INTELLIGENCE_ADMIN;
 USE DATABASE DASH_AUTOMATED_INTELLIGENCE_DB;
 USE SCHEMA SEMANTIC;
 USE WAREHOUSE AUTOMATED_INTELLIGENCE_WH;

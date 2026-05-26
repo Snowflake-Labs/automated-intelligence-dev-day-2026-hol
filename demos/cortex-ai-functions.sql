@@ -6,7 +6,7 @@
 -- directly within SQL queries using natural language predicates.
 -- ============================================================================
 
-USE ROLE SNOWFLAKE_INTELLIGENCE_ADMIN;
+USE ROLE AUTOMATED_INTELLIGENCE_ADMIN;
 USE DATABASE DASH_AUTOMATED_INTELLIGENCE_DB;
 USE WAREHOUSE AUTOMATED_INTELLIGENCE_WH;
 

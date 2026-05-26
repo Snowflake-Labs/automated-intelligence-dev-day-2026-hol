@@ -11,7 +11,7 @@
 -- - Zero configuration required
 -- ============================================================================
 
-USE ROLE SNOWFLAKE_INTELLIGENCE_ADMIN;
+USE ROLE AUTOMATED_INTELLIGENCE_ADMIN;
 USE DATABASE DASH_AUTOMATED_INTELLIGENCE_DB;
 USE WAREHOUSE AUTOMATED_INTELLIGENCE_GEN2_WH;  -- Must use Gen2 warehouse
 

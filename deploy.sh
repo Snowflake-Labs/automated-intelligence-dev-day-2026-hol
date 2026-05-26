@@ -19,7 +19,7 @@ snow sql -f "$SCRIPT_DIR/setup.sql" -c "$CONNECTION"
 
 echo ""
 echo "[3/5] Creating agent..."
-snow sql -f "$SCRIPT_DIR/snowflake-intelligence/create_agent.sql" -c "$CONNECTION"
+snow sql -f "$SCRIPT_DIR/snowflake-cowork/create_agent.sql" -c "$CONNECTION"
 
 echo ""
 echo "[4/5] Deploying Streamlit dashboard..."

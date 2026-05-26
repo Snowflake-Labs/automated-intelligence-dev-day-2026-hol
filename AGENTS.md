@@ -10,7 +10,7 @@
 setup.sql                      ← Root DDL: creates all shared infrastructure
 demos/                         ← Section demos (Cortex AI, data quality, Gen2, Iceberg, interactive, security, SQL features)
 dbt-analytics/                 ← dbt project (staging + mart models)
-snowflake-intelligence/        ← Cortex Agent + Semantic View
+snowflake-cowork/              ← Cortex Agent + Semantic View
 snowpipe-streaming-python/     ← Python Snowpipe Streaming SDK
 streamlit-dashboard/           ← 7-page Streamlit in Snowflake app
 ```

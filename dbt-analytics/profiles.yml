@@ -7,7 +7,7 @@ automated_intelligence:
       # They will use the current session context
       account: 'not needed'
       user: 'not needed'
-      role: SNOWFLAKE_INTELLIGENCE_ADMIN
+      role: AUTOMATED_INTELLIGENCE_ADMIN
       warehouse: automated_intelligence_wh
       database: dash_automated_intelligence_db
       schema: staging  # Base schema (will be overridden by custom_schema in models)
@@ -18,7 +18,7 @@ automated_intelligence:
       type: snowflake
       account: 'not needed'
       user: 'not needed'
-      role: SNOWFLAKE_INTELLIGENCE_ADMIN
+      role: AUTOMATED_INTELLIGENCE_ADMIN
       warehouse: automated_intelligence_wh
       database: dash_automated_intelligence_db
       schema: staging  # Base schema (will be overridden by custom_schema in models)
