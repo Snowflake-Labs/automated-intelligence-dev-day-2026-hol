@@ -31,6 +31,28 @@ A production-grade AI-powered retail analytics platform on Snowflake — from ra
 
 ---
 
+## Table of Contents
+
+1. [Setup](#setup)
+2. [Explore Your Data](#explore-your-data)
+3. [Data Quality](#data-quality)
+4. [Dynamic Tables Pipeline](#dynamic-tables-pipeline)
+5. [dbt Analytics](#dbt-analytics)
+6. [Gen2 Warehouse: Optima Indexing](#gen2-warehouse-optima-indexing)
+7. [Interactive Tables](#interactive-tables)
+8. [CoCo Custom Skill](#coco-custom-skill)
+9. [Snowflake CoWork](#snowflake-cowork)
+10. [Security and Governance](#security-and-governance)
+11. [Streamlit Dashboard](#streamlit-dashboard)
+12. [Agent Evaluation](#agent-evaluation)
+13. [MCP Server](#mcp-server)
+14. [Optional: Iceberg V3 Features](#optional-iceberg-v3-features)
+15. [Optional: Streaming Ingestion](#optional-streaming-ingestion)
+16. [Cleanup](#cleanup)
+17. [Resources](#resources)
+
+---
+
 ## Setup
 
 ### Install Snowflake CLI
